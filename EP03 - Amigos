@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_AMIGOS 100
+
+int main() {
+    char amigos[MAX_AMIGOS][50], novos_amigos[MAX_AMIGOS][50], amigo_indicado[50];
+    int i, j, indice_amigo_indicado = -1, n_amigos, n_novos_amigos;
+
+    // Lê a lista atual de amigos de Luiggy
+    n_amigos = 0;
+    while (scanf("%s", amigos[n_amigos]) == 1) {
+        n_amigos++;
+    }
+
+    // Lê a nova lista de amigos de Luiggy
+    n_novos_amigos = 0;
+    while (scanf("%s", novos_amigos[n_novos_amigos]) == 1) {
+        n_novos_amigos++;
+    }
+
+    // Lê o nome do amigo a ser indicado ou a palavra "nao"
+    scanf("%s", amigo_indicado);
+
+    // Procura o índice do amigo indicado
+    for (i = 0; i < n_amigos; i++) {
+        if (strcmp(amigos[i], amigo_indicado) == 0) {
+            indice_amigo_indicado = i;
+            break;
+        }
+    }
+
+    // Insere os novos amigos antes do amigo indicado, se houver
+    if (indice_amigo_indicado != -1) {
+        for (i = n_amigos + n_novos_amigos - 1, j = n_amigos - 1; j > indice_amigo_indicado; i--, j--) {
+            strcpy(amigos[i], amigos[j]);
+        }
+        for (i = indice_amigo_indicado + 1, j = 0; j < n_novos_amigos; i++, j++) {
+            strcpy(amigos[i], novos_amigos[j]);
+        }
+    }
+    // Insere os novos amigos no final da lista, se não houver amigo indicado
+    else {
+        for (i = n_amigos, j = 0; j < n_novos_amigos; i++, j++) {
+            strcpy(amigos[i], novos_amigos[j]);
+        }
+    }
+
+    // Imprime a lista atualizada de amigos de Luiggy
+    for (i = 0; i < n_amigos + n_novos_amigos; i++) {
+        printf("%s ", amigos[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
