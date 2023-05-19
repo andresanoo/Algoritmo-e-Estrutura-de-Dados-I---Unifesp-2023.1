@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int containsZelda(const char *str) {
+    const char *substring = "zelda";
+    const int length = strlen(substring);
+
+    for (int i = 0; str[i] != '\0'; i++) {
+      
+        if (tolower(str[i]) == substring[0]) {
+            int j;
+         
+            for (j = 1; j < length; j++) {
+          
+                if (tolower(str[i + j]) != substring[j]) {
+                    break; 
+                }
+            }
+            if (j == length) {
+                return 1; 
+            }
+        }
+    }
+    return 0; 
+}
+int main() {
+    char name[100001];
+    scanf("%s", name);
+
+    if (containsZelda(name)) {
+        printf("Link Bolado\n"); 
+    } else {
+        printf("Link Tranquilo\n"); 
+    }
+    return 0;
+}
