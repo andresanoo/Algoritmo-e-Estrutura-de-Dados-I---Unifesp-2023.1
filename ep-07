@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char value;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNewNode(char value) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->value = value;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+int search(char arr[], int start, int end, char value) {
+    for (int i = start; i <= end; i++) {
+        if (arr[i] == value)
+            return i;
+    }
+    return -1;
+}
+
+struct Node* buildTree(char pre[], char in[], int start, int end, int* prefix) {
+    if (start > end)
+        return NULL;
+
+    struct Node* node = createNewNode(pre[*prefix]);
+    (*prefix)++;
+
+    if (start == end)
+        return node;
+
+    int inorder = search(in, start, end, node->value);
+    node->left = buildTree(pre, in, start, inorder - 1, prefix);
+    node->right = buildTree(pre, in, inorder + 1, end, prefix);
+
+    return node;
+}
+
+void postorder(struct Node* node) {
+    if (node == NULL)
+        return;
+
+    postorder(node->left);
+    postorder(node->right);
+    printf("%c", node->value);
+}
+
+void convertToPostfix(char pre[], char in[], int size) {
+    int prefix = 0;
+    struct Node* root = buildTree(pre, in, 0, size - 1, &prefix);
+    postorder(root);
+    printf("\n");
+}
+
+int main() {
+    int numCases;
+    int numElements;
+    char string1[100];
+    char string2[100];
+    scanf("%d", &numCases);
+    for (int i = 0; i < numCases; i++) {
+        scanf("%d %s %s", &numElements, string1, string2);
+        convertToPostfix(string1, string2, numElements);
+    }
+
+    return 0;
+}
