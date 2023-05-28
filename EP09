@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Representa o mapa
+typedef struct {
+    int largura;
+    int altura;
+    char **celulas;
+} Mapa;
+
+// Cria um novo mapa
+Mapa *criarMapa(int largura, int altura) {
+    Mapa *mapa = (Mapa *)malloc(sizeof(Mapa));
+    mapa->largura = largura;
+    mapa->altura = altura;
+
+    mapa->celulas = (char **)malloc(sizeof(char *) * altura);
+    for (int i = 0; i < altura; i++) {
+        mapa->celulas[i] = (char *)malloc(sizeof(char) * (largura + 1));
+    }
+
+    return mapa;
+}
+
+void liberarMapa(Mapa *mapa) {
+    if (mapa == NULL) {
+        return;
+    }
+    for (int i = 0; i < mapa->altura; i++) {
+        free(mapa->celulas[i]);
+    }
+    free(mapa->celulas);
+    free(mapa);
+}
+
+int ehMapaValido(Mapa *mapa) {
+    int x = 0, y = 0;  // Posição no mapa
+    int **visitados = (int **)malloc(sizeof(int *) * mapa->altura);  // Mantém o controle das posições visitadas
+
+    for (int i = 0; i < mapa->altura; i++) {
+        visitados[i] = (int *)malloc(sizeof(int) * mapa->largura);
+        for (int j = 0; j < mapa->largura; j++) {
+            visitados[i][j] = 0;
+        }
+    }
+
+    while (1) {
+        // Verifica se a posição atual está fora do mapa
+        if (x < 0 || x >= mapa->largura || y < 0 || y >= mapa->altura) {
+            return 0;
+        }
+
+        if (visitados[y][x]) {
+            return 0;
+        }
+
+        visitados[y][x] = 1;
+
+        char simbolo = mapa->celulas[y][x];  // Obtém o símbolo na posição atual
+
+        // Verifica o símbolo e atualiza a posição
+        switch (simbolo) {
+            case '>':
+                x++;
+                break;
+            case '<':
+                x--;
+                break;
+            case 'v':
+                y++;
+                break;
+            case '^':
+                y--;
+                break;
+            case '*':
+                // Encontrou o baú com obsidiana
+                for (int i = 0; i < mapa->altura; i++) {
+                    free(visitados[i]);
+                }
+                free(visitados);
+                return 1;
+            case '.':
+                // Continua para a próxima posição
+                if (x < mapa->largura - 1) {
+                    x++;
+                } else if (y < mapa->altura - 1) {
+                    x = 0;
+                    y++;
+                } else {
+                    // Alcançou o final do mapa sem encontrar o baú
+                    for (int i = 0; i < mapa->altura; i++) {
+                        free(visitados[i]);
+                    }
+                    free(visitados);
+                    return 0;
+                }
+                break;
+            default:
+                // Símbolo inválido
+                for (int i = 0; i < mapa->altura; i++) {
+                    free(visitados[i]);
+                }
+                free(visitados);
+                return 0;
+        }
+    }
+}
+
+int main() {
+    int largura, altura;
+
+    // Lê a largura e altura do mapa
+    scanf("%d", &largura);
+    scanf("%d", &altura);
+
+    Mapa *mapa = criarMapa(largura, altura);
+
+    for (int i = 0; i < altura; i++) {
+        scanf("%s", mapa->celulas[i]);
+    }
+
+    // Verifica se o mapa é válido
+    int ehValido = ehMapaValido(mapa);
+
+    // Imprime o resultado
+    if (ehValido) {
+        printf("*\n");
+    } else {
+        printf("!\n");
+    }
+
+    liberarMapa(mapa);
+
+    return 0;
+}
