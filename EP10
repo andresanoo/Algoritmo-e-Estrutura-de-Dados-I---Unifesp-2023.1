@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INF 9999999
+
+typedef struct {
+    int city1;
+    int city2;
+} Route;
+
+int** createGraph(int numCities) {
+    int** graph = (int**)malloc((numCities + 1) * sizeof(int*));
+    for (int i = 1; i <= numCities; i++) {
+        graph[i] = (int*)calloc(numCities + 1, sizeof(int));
+    }
+    return graph;
+}
+
+void freeGraph(int** graph, int numCities) {
+    for (int i = 1; i <= numCities; i++) {
+        free(graph[i]);
+    }
+    free(graph);
+}
+
+void dijkstra(int** graph, int start, int numCities, int* dist) {
+    for (int i = 1; i <= numCities; i++) {
+        dist[i] = INF;
+    }
+
+    dist[start] = 0;
+
+    int* visited = (int*)calloc(numCities + 1, sizeof(int));
+
+    for (int count = 0; count < numCities - 1; count++) {
+        int minDist = INF;
+        int minIndex = -1;
+
+        for (int i = 1; i <= numCities; i++) {
+            if (!visited[i] && dist[i] < minDist) {
+                minDist = dist[i];
+                minIndex = i;
+            }
+        }
+
+        if (minIndex == -1)
+            break;
+
+        visited[minIndex] = 1;
+
+        for (int i = 1; i <= numCities; i++) {
+            if (!visited[i] && graph[minIndex][i] && dist[minIndex] + 1 < dist[i]) {
+                dist[i] = dist[minIndex] + 1;
+            }
+        }
+    }
+
+    free(visited);
+}
+
+int main() {
+    int numCities, numRoutes;
+    while (scanf("%d %d", &numCities, &numRoutes) != EOF) {
+        Route* routes = (Route*)malloc(numRoutes * sizeof(Route));
+        int** graph = createGraph(numCities);
+        int startCity, endCity, avoidCity;
+
+        // Ler as rotas
+        for (int i = 0; i < numRoutes; i++) {
+            scanf("%d %d", &routes[i].city1, &routes[i].city2);
+            graph[routes[i].city1][routes[i].city2] = 1;
+            graph[routes[i].city2][routes[i].city1] = 1;
+        }
+
+        // Ler as cidades de partida, chegada e a cidade a evitar
+        scanf("%d %d %d", &startCity, &endCity, &avoidCity);
+
+        // Remover a rota entre a cidade de evitar e qualquer outra cidade
+        for (int i = 1; i <= numCities; i++) {
+            graph[avoidCity][i] = 0;
+            graph[i][avoidCity] = 0;
+        }
+
+        int* dist = (int*)malloc((numCities + 1) * sizeof(int));
+        dijkstra(graph, startCity, numCities, dist);
+        int result = dist[endCity];
+        printf("%d\n", result);
+
+        free(dist);
+        freeGraph(graph, numCities);
+        free(routes);
+    }
+
+    return 0;
+}
