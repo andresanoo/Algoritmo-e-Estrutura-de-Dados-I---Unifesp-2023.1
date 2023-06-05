@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int valor;
+    struct No* esquerda;
+    struct No* direita;
+} No;
+
+No* criarNo(int valor) {
+    No* no = (No*)malloc(sizeof(No));
+    no->valor = valor;
+    no->esquerda = NULL;
+    no->direita = NULL;
+    return no;
+}
+
+No* inserirNo(No* raiz, int valor) {
+    if (raiz == NULL) {
+        return criarNo(valor);
+    }
+
+    No* atual = raiz;
+    No* pai = NULL;
+
+    while (atual != NULL) {
+        pai = atual;
+
+        if (valor < atual->valor) {
+            atual = atual->esquerda;
+        } else if (valor > atual->valor) {
+            atual = atual->direita;
+        } else {
+            return raiz; 
+        }
+    }
+
+    if (valor < pai->valor) {
+        pai->esquerda = criarNo(valor);
+    } else {
+        pai->direita = criarNo(valor);
+    }
+
+    return raiz;
+}
+
+void prefixo(No* raiz) {
+    if (raiz != NULL) {
+        printf("%d ", raiz->valor);
+        prefixo(raiz->esquerda);
+        prefixo(raiz->direita);
+    }
+}
+
+void infixo(No* raiz) {
+    if (raiz != NULL) {
+        infixo(raiz->esquerda);
+        printf("%d ", raiz->valor);
+        infixo(raiz->direita);
+    }
+}
+
+void posfixo(No* raiz) {
+    if (raiz != NULL) {
+        posfixo(raiz->esquerda);
+        posfixo(raiz->direita);
+        printf("%d ", raiz->valor);
+    }
+}
+
+void liberarArvore(No* raiz) {
+    if (raiz != NULL) {
+        liberarArvore(raiz->esquerda);
+        liberarArvore(raiz->direita);
+        free(raiz);
+    }
+}
+
+int main() {
+    int numCasos;
+    scanf("%d", &numCasos);
+
+    for (int i = 1; i <= numCasos; i++) {
+        int numValores;
+        scanf("%d", &numValores);
+
+        No* raiz = NULL;
+        for (int j = 0; j < numValores; j++) {
+            int valor;
+            scanf("%d", &valor);
+            raiz = inserirNo(raiz, valor);
+        }
+
+        printf("Case %d:\n", i);
+        printf("Pre.: ");
+        prefixo(raiz);
+        printf("\n");
+        printf("In..: ");
+        infixo(raiz);
+        printf("\n");
+        printf("Post: ");
+        posfixo(raiz);
+        printf("\n");
+
+        liberarArvore(raiz);
+    }
+
+    return 0;
+}
