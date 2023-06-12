@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct no {
+    int chave;
+    struct no* proximo;
+} No;
+
+void inserir(No** tabela, int chave, int tamanho) {
+    int indice = chave % tamanho;
+    No* novoNo = (No*)malloc(sizeof(No));
+    novoNo->chave = chave;
+    novoNo->proximo = NULL;
+
+    if (tabela[indice] == NULL) {
+        tabela[indice] = novoNo;
+    } else {
+        No* atual = tabela[indice];
+        while (atual->proximo != NULL) {
+            atual = atual->proximo;
+        }
+        atual->proximo = novoNo;
+    }
+}
+
+void imprimirTabela(No** tabela, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d -> ", i);
+        if (tabela[i] != NULL) {
+            No* atual = tabela[i];
+            while (atual != NULL) {
+                printf("%d -> ", atual->chave);
+                atual = atual->proximo;
+            }
+        }
+        printf("\\\n");
+    }
+}
+
+void liberarTabela(No** tabela, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        No* atual = tabela[i];
+        while (atual != NULL) {
+            No* temp = atual;
+            atual = atual->proximo;
+            free(temp);
+        }
+    }
+    free(tabela);
+}
+
+int main() {
+    int numCasos;
+    scanf("%d", &numCasos);
+
+    for (int i = 0; i < numCasos; i++) {
+        int tamanho, numChaves;
+        scanf("%d %d", &tamanho, &numChaves);
+
+        No** tabela = (No**)malloc(tamanho * sizeof(No*));
+        for (int j = 0; j < tamanho; j++) {
+            tabela[j] = NULL;
+        }
+
+        for (int j = 0; j < numChaves; j++) {
+            int chave;
+            scanf("%d", &chave);
+            inserir(tabela, chave, tamanho);
+        }
+
+        imprimirTabela(tabela, tamanho);
+        if (i < numCasos - 1) {
+            printf("\n");
+        }
+
+        liberarTabela(tabela, tamanho);
+    }
+
+    return 0;
+}
