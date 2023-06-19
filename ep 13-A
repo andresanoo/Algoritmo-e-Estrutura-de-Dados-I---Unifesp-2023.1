@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_LINES 10000
+#define MAX_CHARS 201
+#define MAX_WORDS 5000
+#define MAX_WORD_LENGTH 201
+
+int compare_strings(const void *a, const void *b)
+{
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+int is_word_char(char c)
+{
+    return isalpha(c) || (c == '\'' && isalpha(c + 1));
+}
+
+int main()
+{
+    char text[MAX_LINES][MAX_CHARS];
+    char *words[MAX_WORDS];
+    int numWords = 0;
+
+    // Ler o texto
+    int lineCount = 0;
+    while (fgets(text[lineCount], MAX_CHARS, stdin) != NULL)
+    {
+        lineCount++;
+        if (lineCount == MAX_LINES)
+        {
+            break;
+        }
+    }
+
+    // Processar as palavras
+    for (int i = 0; i < lineCount; i++)
+    {
+        int len = strlen(text[i]);
+        int start = 0;
+        while (start < len)
+        {
+            // Encontrar o início de uma palavra
+            while (start < len && !is_word_char(text[i][start]))
+            {
+                start++;
+            }
+
+            // Encontrar o fim da palavra
+            int end = start;
+            while (end < len && is_word_char(text[i][end]))
+            {
+                end++;
+            }
+
+            // Extrair a palavra e convertê-la para minúsculas
+            if (start < end)
+            {
+                char word[MAX_WORD_LENGTH];
+                int wordLen = 0;
+                for (int j = start; j < end && wordLen < MAX_WORD_LENGTH - 1; j++)
+                {
+                    word[wordLen++] = tolower(text[i][j]);
+                }
+                word[wordLen] = '\0';
+
+                // Adicionar a palavra à lista de palavras
+                words[numWords] = malloc((wordLen + 1) * sizeof(char));
+                strcpy(words[numWords], word);
+                numWords++;
+            }
+
+            start = end;
+        }
+    }
+
+    // Ordenar as palavras em ordem alfabética
+    qsort(words, numWords, sizeof(char *), compare_strings);
+
+    // Imprimir as palavras distintas
+    char prevWord[MAX_WORD_LENGTH] = "";
+    for (int i = 0; i < numWords; i++)
+    {
+        if (strcmp(words[i], prevWord) != 0)
+        {
+            printf("%s\n", words[i]);
+            strcpy(prevWord, words[i]);
+        }
+        free(words[i]);
+    }
+
+    return 0;
+}
