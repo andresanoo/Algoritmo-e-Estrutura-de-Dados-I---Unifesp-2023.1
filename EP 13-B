@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_LANGUAGES 100
+
+char* findCommonLanguage(char** languages, int numPeople)
+{
+    int i;
+    char* commonLanguage = languages[0];
+
+    for (i = 1; i < numPeople; i++)
+    {
+        if (strcmp(languages[i], commonLanguage) != 0)
+        {
+            commonLanguage = "ingles";
+            break;
+        }
+    }
+
+    return commonLanguage;
+}
+
+int main()
+{
+    int numCases;
+    scanf("%d", &numCases);
+
+    int i, j;
+    for (i = 0; i < numCases; i++)
+    {
+        int numPeople;
+        scanf("%d", &numPeople);
+
+        char* languages[MAX_LANGUAGES];
+        for (j = 0; j < numPeople; j++)
+        {
+            languages[j] = malloc(20 * sizeof(char));
+            scanf("%s", languages[j]);
+        }
+
+        char* commonLanguage = findCommonLanguage(languages, numPeople);
+        printf("%s\n", commonLanguage);
+
+        for (j = 0; j < numPeople; j++)
+        {
+            free(languages[j]);
+        }
+    }
+
+    return 0;
+}
