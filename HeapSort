@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define tamanho 20000
+
+void heapsort(int *v, int tam) {
+	int i, aux;
+
+	for(i = (tam / 2); i >= 0; i--){
+		criaheap(v, i, tam - 1);
+	}
+
+	for(i = tam-1; i >= 1; i--){
+		aux = v[0];
+		v[0] = v[i];
+		v[i] = aux;
+		criaheap(v, 0, i-1);
+	}
+}
+
+void criaheap(int *v, int raiz, int fundo) {
+	int r, fmax, aux;
+
+	r = 0;
+	while ((raiz*2 <= fundo) && (!r)) {
+		if (raiz*2 == fundo) {
+			fmax = raiz * 2;
+		}
+		else if (v[raiz * 2] > v[raiz * 2 + 1]) {
+			fmax = raiz * 2;
+		}
+		else {
+			fmax = raiz * 2 + 1;
+		}
+
+	if (v[raiz] < v[fmax]) {
+		aux = v[raiz];
+		v[raiz] = v[fmax];
+		v[fmax] = aux;
+		raiz = fmax;
+    }
+	else {
+      r = 1;
+	}
+  }
+}
+
+
+int main(){
+    int i, vetor[tamanho];
+    clock_t tempo;
+
+    for (i = 0; i < tamanho; i++){
+        vetor[i] = rand();
+    }
+
+    tempo = clock();
+
+    heapsort(vetor, tamanho);
+
+    tempo = clock() - tempo;
+
+    for (i = 0; i < tamanho; i++){
+        printf("%d ", vetor[i]);
+    }
+
+    printf("\n%lf\n", ((double)tempo)/((CLOCKS_PER_SEC/1000)));
+
+return 0;
+
+}
