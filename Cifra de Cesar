@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+
+    int n, deslocamento, i, j;
+    char cifra[50];
+
+    scanf("%i", &n);
+
+    // leitura da cifra
+    for(i = 0; i < n; i++) {
+        scanf("%s", &cifra);
+        scanf("%i", &deslocamento);
+
+        // loop para deslocamento e impressão
+        for (j = 0; j < strlen(cifra); j++){
+            if (cifra[j] - deslocamento < 'A'){
+                cifra[j] = (cifra[j] - deslocamento) + 26;
+            } 
+            else {
+            cifra[j] = cifra[j] - deslocamento;
+            }
+        }
+        
+        printf("%s\n", cifra);
+    }
+    
+    return 0;
+}
