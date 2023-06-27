@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main() {
+    int n1, n2, soma, i, vet[10];
+
+    while (scanf("%d %d",&n1,&n2) && n1!=0 || n2!=0) {
+        soma = n1 + n2;
+
+        //separa o algarismo em digitos e os adere ao vetor
+        for (i = 0; i < 11; i++){
+			vet[i] = soma % 10;
+			soma /= 10;
+		}
+        for(i = 10; i >= 0; i--){ //o vetor aderiu valores de trás para frente
+			if(vet[i] != 0){ //imprime o vetor
+				printf("%d",vet[i]);
+			}
+		}
+		printf("\n");
+	}
+}
