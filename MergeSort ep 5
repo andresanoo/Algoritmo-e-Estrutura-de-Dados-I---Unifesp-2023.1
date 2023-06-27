@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define tamanho 20000
+
+void mergesort(int *v, int tam) {
+    int *crescente = malloc(sizeof(int) * tam);
+    sort(v, crescente, 0, tam - 1);
+    free(crescente);
+}
+
+void sort(int *v, int *crescente, int inicio, int fim) {
+    if (inicio >= fim)
+        return;
+
+    int meio = (inicio + fim)/2;
+
+    sort(v, crescente, inicio, meio);
+    sort(v, crescente, meio + 1, fim);
+
+    if (v[meio] <= v[meio + 1])
+        return;
+
+    merge(v, crescente, inicio, meio, fim);
+}
+
+void merge(int *v, int *crescente, int inicio, int meio, int fim) {
+    int z, iv = inicio, ic = meio + 1;
+
+    for (z = inicio; z <= fim; z++){
+        crescente[z] = v[z];
+    }
+
+    z = inicio;
+
+    while (iv <= meio && ic <= fim) {
+        if (crescente[iv] <= crescente[ic]){
+            v[z++] = crescente[iv++];
+        }else v[z++] = crescente[ic++];
+    }
+
+    while (iv <= meio){
+        v[z++] = crescente[iv++];
+    }
+
+    while (ic <= fim) {
+        v[z++] = crescente[ic++];
+    }
+}
+
+int main(){
+    int i, vetor[tamanho];
+    clock_t tempo;
+
+    for (i = 0; i < tamanho; i++){
+        vetor[i] = rand();
+    }
+
+    tempo = clock();
+
+    mergesort(vetor, tamanho);
+
+    tempo = clock() - tempo;
+
+    for (i = 0; i < tamanho; i++){
+        printf("%d ", vetor[i]);
+    }
+
+    printf("\n%lf\n", ((double)tempo)/((CLOCKS_PER_SEC/1000)));
+
+return 0;
+
+}
