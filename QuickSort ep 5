@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define tamanho 20000
+
+int particiona(int *v, int inicio, int fim){
+	int esq, dir, pivo, aux;
+	esq = inicio;
+	dir = fim;
+	pivo = v[inicio];
+
+	while(esq < dir){
+        while(v[esq] <= v[dir])
+            esq++;
+        while(v[dir] > pivo)
+            dir--;
+        if(esq < dir){
+            aux = v[esq];
+            v[esq] = v[dir];
+            v[dir] = aux;
+        }
+	}
+
+    v[inicio] = v[dir];
+    v[dir] = pivo;
+
+    return dir;
+
+}
+
+void quicksort(int *v, int inicio, int fim){
+    int pivo;
+
+	if(inicio < fim){
+        pivo = particiona(v, inicio, fim);
+        quicksort(v, inicio, pivo - 1);
+        quicksort(v, pivo + 1, fim);
+	}
+}
+
+int main(){
+    int i, vetor[tamanho];
+    clock_t tempo;
+
+    for (i = 0; i < tamanho; i++){
+        vetor[i] = rand();
+    }
+
+    tempo = clock();
+
+    quicksort(vetor, 0, tamanho - 1);
+
+    tempo = clock() - tempo;
+
+    for (i = 0; i < tamanho; i++){
+        printf("%d ", vetor[i]);
+    }
+
+    printf("\n%lf\n", ((double)tempo)/((CLOCKS_PER_SEC/1000)));
+
+return 0;
+
+}
