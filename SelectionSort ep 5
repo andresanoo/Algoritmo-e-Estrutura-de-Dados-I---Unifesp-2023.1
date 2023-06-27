@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <time.h>
+#define tamanho 100000
+
+void seletionsort (int tam, int vet[]) {
+    int i, j, aux, menor;
+    for (i = 0; i < tam - 1; i++){
+        menor = i;
+        for (j = i+1; j < tam; j++){
+            if(vet[j] < vet[menor]){
+                menor = j;
+            }
+            aux = vet[i];
+            vet[i] = vet[menor];
+            vet[menor] = aux;
+            }
+    }
+}
+
+int main(){
+    int i, vetor[tamanho];
+    clock_t tempo;
+
+    for (i = 0; i < tamanho; i++){
+        vetor[i] = rand();
+    }
+
+    tempo = clock();
+
+    seletionsort(tamanho, vetor);
+
+    tempo = clock() - tempo;
+
+    for (i = 0; i < tamanho; i++){
+        printf("%d ", vetor[i]);
+    }
+
+    printf("\n%lf\n", ((double)tempo)/((CLOCKS_PER_SEC/1000)));
+
+    return 0;
+}
